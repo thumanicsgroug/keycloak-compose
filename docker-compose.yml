@@ -3,16 +3,13 @@ x-logging: &a1
   options:
     max-size: 10m
     max-file: "3"
+
 services:
   postgres:
     image: postgres:${POSTGRES_VERSION}
     restart: unless-stopped
     healthcheck:
-      test:
-        - CMD
-        - pg_isready
-        - -U
-        - keycloak
+      test: ["CMD", "pg_isready", "-U", "keycloak"]
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
@@ -23,11 +20,10 @@ services:
         tmpfs:
           size: 100000000
     logging: *a1
+
   keycloak:
     image: quay.io/keycloak/keycloak:${KC_VERSION}
-    command:
-      - start-dev
-      - --import-realm
+    command: ["start-dev", "--import-realm"]
     restart: unless-stopped
     environment:
       KC_DB: postgres
@@ -47,6 +43,7 @@ services:
     volumes:
       - ./keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro
     logging: *a1
+
   prometheus:
     image: prom/prometheus:${PROMETHEUS_VERSION}
     command:
@@ -57,28 +54,20 @@ services:
       - --web.enable-lifecycle
     restart: unless-stopped
     healthcheck:
-      test:
-        - CMD
-        - wget
-        - --tries=1
-        - --spider
-        - ${KC_HOSTNAME}:9092/-/healthy
+      test: ["CMD", "wget", "--tries=1", "--spider", "${KC_HOSTNAME}:9092/-/healthy"]
     ports:
       - ${PROMETHEUS_PORT}:9090
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     logging: *a1
+
   grafana:
     image: grafana/grafana-oss:${GF_VERSION}
     restart: unless-stopped
     ports:
       - ${GF_SERVER_HTTP_PORT}:${GF_SERVER_HTTP_PORT}
     healthcheck:
-      test:
-        - CMD
-        - wget
-        - --spider
-        - ${KC_HOSTNAME}:${GF_SERVER_HTTP_PORT}/api/health
+      test: ["CMD", "wget", "--spider", "${KC_HOSTNAME}:${GF_SERVER_HTTP_PORT}/api/health"]
     environment:
       GF_SERVER_HTTP_PORT: ${GF_SERVER_HTTP_PORT}
       GF_LOG_LEVEL: ${GF_LOG_LEVEL}
@@ -94,7 +83,7 @@ services:
       GF_AUTH_GENERIC_OAUTH_AUTH_URL: ${KC_HOSTNAME}:${KC_PORT}/realms/${KC_REALM_NAME}/protocol/openid-connect/auth
       GF_AUTH_GENERIC_OAUTH_TOKEN_URL: ${KC_HOSTNAME}:${KC_PORT}/realms/${KC_REALM_NAME}/protocol/openid-connect/token
       GF_AUTH_GENERIC_OAUTH_API_URL: ${KC_HOSTNAME}:${KC_PORT}/realms/${KC_REALM_NAME}/protocol/openid-connect/userinfo
-      GF_SERVER_REDIRECT_URL: " ${KC_HOSTNAME}:${GF_SERVER_HTTP_PORT}/login/generic_oauth"
+      GF_SERVER_REDIRECT_URL: ${KC_HOSTNAME}:${GF_SERVER_HTTP_PORT}/login/generic_oauth
       GF_SERVER_ROOT_URL: ${KC_HOSTNAME}:${GF_SERVER_HTTP_PORT}
       GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: contains(realm_access.roles[*],'Admin') && 'Admin' || contains(realm_access.roles[*], 'Editor') && 'Editor' || 'Viewer'
       GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET: ${GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}
@@ -103,4 +92,5 @@ services:
       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
       - ./grafana/datasources:/etc/grafana/provisioning/datasources:ro
     logging: *a1
+
 networks: {}
