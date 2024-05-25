@@ -96,9 +96,7 @@ services:
       GF_AUTH_GENERIC_OAUTH_API_URL: ${KC_HOSTNAME}:${KC_PORT}/realms/${KC_REALM_NAME}/protocol/openid-connect/userinfo
       GF_SERVER_REDIRECT_URL: " ${KC_HOSTNAME}:${GF_SERVER_HTTP_PORT}/login/generic_oauth"
       GF_SERVER_ROOT_URL: ${KC_HOSTNAME}:${GF_SERVER_HTTP_PORT}
-      GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: contains(realm_access.roles[*],
-        'Admin') && 'Admin' || contains(realm_access.roles[*], 'Editor') &&
-        'Editor' || 'Viewer'
+      GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: contains(realm_access.roles[*],'Admin') && 'Admin' || contains(realm_access.roles[*], 'Editor') && 'Editor' || 'Viewer'
       GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET: ${GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}
       GF_AUTH_GENERIC_OAUTH_LOGOUT_URL: ${KC_HOSTNAME}:${KC_PORT}/realms/${KC_REALM_NAME}/protocol/openid-connect/logout
     volumes:
