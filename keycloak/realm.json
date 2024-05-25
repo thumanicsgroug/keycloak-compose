@@ -1,0 +1,157 @@
+{
+    "id": "${KC_REALM_NAME}",
+    "realm": "${KC_REALM_NAME}",
+    "sslRequired": "none",
+    "enabled": true,
+    "eventsEnabled": true,
+    "eventsExpiration": 900,
+    "adminEventsEnabled": true,
+    "adminEventsDetailsEnabled": true,
+    "attributes": {
+      "adminEventsExpiration": "900"
+    },
+    "roles": {
+      "realm": [
+        {
+          "name": "Admin",
+          "description": "Admin role with full permissions""composite": false,
+          "clientRole": false,
+          "containerId": "${KC_REALM_NAME}",
+          "attributes": {}
+        },
+        {
+          "name": "Editor",
+          "description": "Editor role with edit permissions""composite": false,
+          "clientRole": false,
+          "containerId": "${KC_REALM_NAME}",
+          "attributes": {}
+        },
+        {
+          "name": "Viewer",
+          "description": "Viewer role with view permissions""composite": false,
+          "clientRole": false,
+          "containerId": "${KC_REALM_NAME}",
+          "attributes": {}
+        }
+      ]
+    },
+    "clients": [
+      {
+        "id": "grafana",
+        "clientId": "grafana",
+        "name": "grafana",
+        "enabled": true,
+        "publicClient": false,
+        "clientAuthenticatorType": "client-secret",
+        "secret": "FPWqE59DXfm9jWshaEHru7Szmp9Rqo8E",
+        "rootUrl": "${GF_URL}",
+        "adminUrl": "${GF_URL}",
+        "baseUrl": "${GF_URL}",
+        "redirectUris": [
+          "${GF_URL}/*"
+        ],
+        "webOrigins": [
+          "${GF_URL}"
+        ],
+        "notBefore": 0,
+        "bearerOnly": false,
+        "consentRequired": false,
+        "standardFlowEnabled": true,
+        "implicitFlowEnabled": false,
+        "directAccessGrantsEnabled": true,
+        "serviceAccountsEnabled": false,
+        "publicClient": false,
+        "frontchannelLogout": true,
+        "protocol": "openid-connect",
+        "attributes": {
+          "oidc.ciba.grant.enabled": "false",
+          "backchannel.logout.session.required": "true",
+          "post.logout.redirect.uris": "+",
+          "display.on.consent.screen": "false",
+          "oauth2.device.authorization.grant.enabled": "false",
+          "backchannel.logout.revoke.offline.tokens": "false"
+        },
+        "authenticationFlowBindingOverrides": {},
+        "fullScopeAllowed": true,
+        "nodeReRegistrationTimeout": -1,
+        "protocolMappers": [
+          {
+            "name": "realm roles",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-usermodel-realm-role-mapper",
+            "consentRequired": false,
+            "config": {
+              "introspection.token.claim": "true",
+              "multivalued": "true",
+              "userinfo.token.claim": "true",
+              "user.attribute": "foo",
+              "id.token.claim": "false",
+              "lightweight.claim": "true",
+              "access.token.claim": "true",
+              "claim.name": "realm_access.roles",
+              "jsonType.label": "String"
+            }
+          }
+        ],
+      }
+    ],
+    "users": [
+      {
+        "id": "admin",
+        "email": "${GF_ADMIN_USERNAME}@admin",
+        "username": "${GF_ADMIN_USERNAME}",
+        "firstName": "DevOps",
+        "lastName": "SRE",
+        "enabled": true,
+        "emailVerified": true,
+        "credentials": [
+          {
+            "temporary": false,
+            "type": "password",
+            "value": "${GF_ADMIN_PASSWORD}"
+          }
+        ],
+        "realmRoles": [
+          "Admin"
+        ]
+      },
+      {
+        "id": "editor",
+        "email": "editor@user",
+        "username": "editor",
+        "firstName": "editor",
+        "lastName": "editor",
+        "enabled": true,
+        "emailVerified": true,
+        "credentials": [
+          {
+            "temporary": false,
+            "type": "password",
+            "value": "editor"
+          }
+        ],
+        "realmRoles": [
+          "Editor"
+        ]
+      },
+      {
+        "id": "viewer",
+        "email": "viewer@user",
+        "username": "viewer",
+        "firstName": "viewer",
+        "lastName": "viewer",
+        "enabled": true,
+        "emailVerified": true,
+        "credentials": [
+          {
+            "temporary": false,
+            "type": "password",
+            "value": "viewer"
+          }
+        ],
+        "realmRoles": [
+          "Viewer"
+        ]
+      }
+    ]
+  }
